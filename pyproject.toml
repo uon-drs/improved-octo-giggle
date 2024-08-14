@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "improved-octo-giggle"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pandera = "^0.20.3"
+fastapi = {extras = ["standard"], version = "^0.112.0"}
+numpy = "^2.0.1"
+pandas = "^2.2.2"
+pydantic = "^2.8.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
