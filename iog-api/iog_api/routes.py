@@ -1,8 +1,10 @@
+from typing import List
 from fastapi import APIRouter
 from typing import List
 
 
 router = APIRouter()
+
 
 data_types = [
     "bool",
@@ -31,4 +33,32 @@ data_types = [
 @router.get("/datatypes/", response_model=List[str])
 async def get_data_types():
     return data_types
+
+
+@router.get("/checks")
+async def get_checks() -> List:
+    """
+    Sends a list of the supported checks
+
+    Returns
+    -------
+    List
+        A list of pandera's built in checks. We're only using the checks that take a single argument
+    """
+    return [
+            "equal_to",
+            "not_equal_to"
+            "greater_than",
+            "greater_than_or_equal_to",
+            "less_than",
+            "less_than_or_equal_to",
+            "isin",
+            "notin",
+            "str_contains",
+            "str_endswith",
+            # "string length" takes two args,
+            "str_startswith",
+            "str_matches",
+            "unique_values_eq"
+            ]
 
