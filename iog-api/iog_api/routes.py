@@ -88,8 +88,8 @@ async def validate_schema(
         Returns a 202 ACCEPTED status code if the file is successfully validated against the schema.
     """
     try:
-        schema = schemas.get_schemas(db, schema_name)
-        if schema is None:
+        available_schemas = schemas.get_schemas(db, schema_name)
+        if available_schemas is None:
             raise HTTPException(status_code=400, detail="Schema not found.")
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error retrieving schema: {e}")
@@ -100,6 +100,13 @@ async def validate_schema(
         df = pd.read_csv(BytesIO(contents))
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error reading file: {e}")
+
+    # Create the pandera object from the json schema
+    try:
+        schema_json = available_schemas[0].schema
+        schema = pa.DataFrameSchema(schema_json)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error creating schema: {e}")
 
     # Validate the DataFrame against the schema
     try:
