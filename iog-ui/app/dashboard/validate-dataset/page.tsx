@@ -5,17 +5,34 @@ import { Button } from "@/components/ui/button";
 import { useToast } from '@/components/ui/use-toast';
 import { Loader2, UploadCloud } from "lucide-react";
 
-// Mock function to simulate fetching schema options from an endpoint
+// Define the endpoint URLs
+const SCHEMAS_ENDPOINT = '/api/schemas'; 
+const VALIDATE_ENDPOINT = '/api/validate'; 
+
+// Fetch schema options from the endpoint
 const fetchSchemas = async () => {
-  // Simulate a network delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  // Return mock schema options
-  return [
-    { value: "Schema1", label: "Dataset 1" },
-    { value: "Schema2", label: "Dataset 2" },
-    { value: "Schema3", label: "Dataset 3" },
-  ];
+  const response = await fetch(SCHEMAS_ENDPOINT);
+  if (!response.ok) {
+    throw new Error('Failed to fetch schemas');
+  }
+  return response.json();
+};
+
+// Validate the file by sending it to the endpoint
+const validateFile = async (file: File, schema: string) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('schema', schema);
+
+  const response = await fetch(VALIDATE_ENDPOINT, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('Validation failed');
+  }
+  return response.json();
 };
 
 export default function ValidateDataset() {
@@ -65,8 +82,7 @@ export default function ValidateDataset() {
     setIsValidating(true);
 
     try {
-      // Simulate file validation
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const result = await validateFile(file, selectedSchema);
 
       toast({
         title: "Validation Successful!",
