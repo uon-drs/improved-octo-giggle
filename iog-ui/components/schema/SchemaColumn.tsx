@@ -22,8 +22,8 @@ type CustomSelectProps = {
 };
 
 type SchemaColumnProps = {
-  dataTypes: SelectOptions;
-  checks: SelectOptions;
+  dataTypes: string[];
+  checks: string[];
   handleColumnNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
@@ -35,7 +35,7 @@ export const SchemaColumn = ({
   return (
     <>
       <div className="flex max-w-xl flex-col gap-4 border border-blue-900 rounded-md p-4">
-        <div className="flex flex-col gap-2 max-w-md">
+        <div className="flex flex-col gap-2 w-full">
           <h3 className="flex items-center">Column name</h3>
           <Input
             name="columnName"
@@ -47,13 +47,13 @@ export const SchemaColumn = ({
         <CustomSelect
           label="Data types"
           placeholder="Select Data types"
-          options={dataTypes}
+          options={dataTypes?.map((type) => ({ value: type, label: type }))}
         />
-        <div className="flex gap-8 max-w-md">
+        <div className="flex gap-8">
           <CustomSelect
             label="Checks"
             placeholder="Select checks"
-            options={checks}
+            options={checks?.map((check) => ({ value: check, label: check }))}
           />
           <div className="flex flex-col gap-2 max-w-md">
             <h3 className="flex items-center">Value</h3>
@@ -67,7 +67,7 @@ export const SchemaColumn = ({
 
 const CustomSelect = ({ label, placeholder, options }: CustomSelectProps) => {
   return (
-    <div className="flex flex-col gap-2 max-w-md ">
+    <div className="flex flex-grow flex-col gap-2 w-full">
       <h3 className="flex items-center">{label}</h3>
       <Select>
         <SelectTrigger className="w-full rounded-md p-2 border border-blue-900">
@@ -76,7 +76,7 @@ const CustomSelect = ({ label, placeholder, options }: CustomSelectProps) => {
         <SelectContent>
           <SelectGroup>
             <SelectItem value="any">Any</SelectItem>
-            {options.map((option, index) => (
+            {options?.map((option, index) => (
               <SelectItem key={index} value={option.value}>
                 {option.label}
               </SelectItem>
