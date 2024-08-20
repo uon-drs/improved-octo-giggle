@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
+import { Button } from "../ui/button";
 
 interface SeclectOption {
   value: string;
@@ -97,11 +98,24 @@ export const SchemaColumn = ({
         return {
           ...column,
           checks: column.checks.map((check, j) => {
-            if (j === 0) {
+            if (j === checkIndex) {
               return { ...check, value: e.target.value };
             }
             return check;
           }),
+        };
+      }
+      return column;
+    });
+    setColumns(newColumns);
+  };
+
+  const handleAddCheck = () => {
+    const newColumns = columns.map((column, i) => {
+      if (i === index) {
+        return {
+          ...column,
+          checks: [...column.checks, { checkType: "", value: "" }],
         };
       }
       return column;
@@ -128,22 +142,32 @@ export const SchemaColumn = ({
           options={dataTypes?.map((type) => ({ value: type, label: type }))}
           handleSelectChange={handleDataTypeSelectChange}
         />
-        <div className="flex gap-8">
-          <CustomSelect
-            columnIndex={index}
-            label="Checks"
-            placeholder="Select checks"
-            options={checks?.map((check) => ({ value: check, label: check }))}
-            handleSelectChange={(value) => handleCheckSelectChange(value, 0)}
-          />
-          <div className="flex flex-col gap-2 max-w-md">
-            <h3 className="flex items-center">Value</h3>
-            <Input
-              name="columnName"
-              className="text-lg w-md"
-              onChange={(e) => handleCheckInputChange(e, 0)}
+        {columns[index].checks.map((check, checkIndex) => (
+          <div key={checkIndex} className="flex gap-8">
+            <CustomSelect
+              columnIndex={index}
+              label="Checks"
+              placeholder="Select checks"
+              options={checks?.map((check) => ({ value: check, label: check }))}
+              handleSelectChange={(value) =>
+                handleCheckSelectChange(value, checkIndex)
+              }
             />
+
+            <div className="flex flex-col gap-2 max-w-md">
+              <h3 className="flex items-center">Value</h3>
+              <Input
+                name="columnName"
+                className="text-lg w-md"
+                onChange={(e) => handleCheckInputChange(e, checkIndex)}
+              />
+            </div>
           </div>
+        ))}
+        <div className="flex justify-end">
+          <Button className="w-30 self-end" onClick={handleAddCheck}>
+            Add check
+          </Button>
         </div>
       </div>
     </>
