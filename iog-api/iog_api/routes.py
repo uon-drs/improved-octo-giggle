@@ -7,7 +7,8 @@ from fastapi import APIRouter, UploadFile, File, HTTPException, status, Depends,
 from sqlalchemy.orm import Session
 
 from iog_api.db import get_db
-from iog_api.services.schemas import Schema, get_schemas
+from iog_api.services import schemas, validation
+from iog_api.schemas import Schema as pydanticSchema
 
 router = APIRouter()
 
@@ -69,8 +70,8 @@ async def get_checks() -> List:
             ]
 
 @router.get("/schemas")
-async def get_schemata(schema_name: str, db: Session = Depends(get_db)) -> List[Schema]:
-    return get_schemas(db=db, schema_name=schema_name)
+async def get_schemata(schema_name: str, db: Session = Depends(get_db)) -> List[pydanticSchema]:
+    return schemas.get_schemas(db=db, schema_name=schema_name)
 
 @router.post("/schemas/validate", status_code=status.HTTP_202_ACCEPTED)
 async def validate_schema(
@@ -87,7 +88,7 @@ async def validate_schema(
         Returns a 202 ACCEPTED status code if the file is successfully validated against the schema.
     """
     try:
-        schema = schemas.get_schemas(db, schema_name)  # Pass the session to get_schemas
+        schema = schemas.get_schemas(db, schema_name)
         if schema is None:
             raise HTTPException(status_code=400, detail="Schema not found.")
     except Exception as e:
@@ -102,7 +103,7 @@ async def validate_schema(
 
     # Validate the DataFrame against the schema
     try:
-        validation.validate(df)
+        validation.validate_schema(schema, df)
         return None  # Return 202 NO CONTENT on successful validation
     except pa.errors.SchemaError as e:
         error_details = {"error": "Schema validation failed", "details": str(e)}
