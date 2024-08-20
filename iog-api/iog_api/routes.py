@@ -5,7 +5,7 @@ import pandas as pd
 import pandera as pa
 from fastapi import APIRouter, UploadFile, File, HTTPException, status
 
-from services import schema_service, validation_service
+from services import schemas, validation
 
 router = APIRouter()
 
