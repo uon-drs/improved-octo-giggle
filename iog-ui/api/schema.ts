@@ -1,9 +1,11 @@
 "use server";
+
 import request from "@/lib/api/request";
 
 const fetchKeys = {
   dataTypes: () => "datatypes/",
   checks: () => "checks/",
+  createSchema: () => "createschema/", // TODO: Add the correct endpoint
 };
 
 export async function getDataTypeList(): Promise<string[]> {
@@ -22,5 +24,25 @@ export async function getChecksList(): Promise<string[]> {
   } catch (error) {
     console.warn("Failed to fetch data.");
     return [];
+  }
+}
+
+export async function createSchema(
+  schema: any,
+): Promise<{ success: boolean; errorMessage?: string }> {
+  try {
+    console.log(schema);
+    await request(fetchKeys.createSchema(), {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        schema,
+      }),
+    });
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, errorMessage: error.message };
   }
 }
