@@ -1,7 +1,6 @@
 from typing import List
-from fastapi import APIRouter
-from typing import List
-
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
 from iog_api.db import get_db
 from iog_api.services.schemas import Schema, get_schemas
@@ -66,5 +65,5 @@ async def get_checks() -> List:
             ]
 
 @router.get("/schemas")
-async def get_schemata(schema_name: str) -> List[Schema]:
+async def get_schemata(schema_name: str, db: Session = Depends(get_db)) -> List[Schema]:
     return get_schemas(db=db, schema_name=schema_name)
