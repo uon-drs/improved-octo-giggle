@@ -6,8 +6,8 @@ import pandera as pa
 from fastapi import APIRouter, UploadFile, File, HTTPException, status, Depends, Query
 from sqlalchemy.orm import Session
 
-from services import schemas, validation
-from db import get_db
+from iog_api.db import get_db
+from iog_api.services.schemas import Schema, get_schemas
 
 router = APIRouter()
 
@@ -68,6 +68,9 @@ async def get_checks() -> List:
             "unique_values_eq"
             ]
 
+@router.get("/schemas")
+async def get_schemata(schema_name: str, db: Session = Depends(get_db)) -> List[Schema]:
+    return get_schemas(db=db, schema_name=schema_name)
 
 @router.post("/schemas/validate", status_code=status.HTTP_202_ACCEPTED)
 async def validate_schema(
