@@ -1,5 +1,5 @@
 "use client";
-
+import { createSchema } from "@/api/schema";
 import { SchemaColumn } from "@/components/schema/SchemaColumn";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +41,11 @@ const CreateSchemaForm: React.FC<CreateSchemaFormProps> = ({
   dataTypes,
   checks,
 }) => {
+  const handleSubmit = async (schema: any) => {
+    const response = await createSchema(schema);
+    console.log(response);
+  };
+
   const [columns, setColumns] = useState<Column[]>([defaultColumn]);
 
   const [schemaName, setSchemaName] = useState<string>("");
@@ -77,7 +82,7 @@ const CreateSchemaForm: React.FC<CreateSchemaFormProps> = ({
       columns: columnsDict,
     };
 
-    console.log(JSON.stringify(schema, null, 2));
+    handleSubmit(schema);
   };
 
   return (
