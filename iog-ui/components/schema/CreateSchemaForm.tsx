@@ -29,14 +29,11 @@ interface ColumnsDict {
 const defaultColumn: Column = {
   name: "",
   type: "",
-  checks: [
-    { checkType: "sample1", value: "sample1_value" },
-    { checkType: "sample2", value: "sample2_value" },
-  ],
+  checks: [{ checkType: "", value: "" }],
 };
 
 interface CreateSchemaFormProps {
-  dataTypes: string[] 
+  dataTypes: string[];
   checks: string[];
 }
 
@@ -56,35 +53,7 @@ const CreateSchemaForm: React.FC<CreateSchemaFormProps> = ({
     setSchemaName(e.target.value);
   };
 
-  const handleColumnNameChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    const newColumns = columns.map((column, i) => {
-      if (i === index) {
-        return { ...column, name: e.target.value };
-      }
-      return column;
-    });
-    setColumns(newColumns);
-  };
-
-  const handleDataTypeChange = (
-    e: React.ChangeEvent<HTMLSelectElement>,
-    index: number
-  ) => {
-    const newColumns = columns.map((column, i) => {
-      if (i === index) {
-        return { ...column, type: e.target.value };
-      }
-      return column;
-    });
-    setColumns(newColumns);
-  };
-
   const handleCreateSchema = () => {
-    console.log("columns", columns);
-
     const columnsDict: ColumnsDict = columns.reduce(
       (acc: ColumnsDict, column: Column, index: number) => {
         acc[`column${index + 1}`] = {
@@ -132,9 +101,11 @@ const CreateSchemaForm: React.FC<CreateSchemaFormProps> = ({
           {columns.map((column, index) => (
             <SchemaColumn
               key={index}
+              index={index}
               dataTypes={dataTypes}
               checks={checks}
-              handleColumnNameChange={(e) => handleColumnNameChange(e, index)}
+              columns={columns}
+              setColumns={setColumns}
             />
           ))}
         </div>
@@ -151,6 +122,5 @@ const CreateSchemaForm: React.FC<CreateSchemaFormProps> = ({
     </div>
   );
 };
-
 
 export default CreateSchemaForm;
