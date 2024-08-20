@@ -31,7 +31,6 @@ export async function createSchema(
   schema: any,
 ): Promise<{ success: boolean; errorMessage?: string }> {
   try {
-    console.log(schema);
     await request(fetchKeys.createSchema(), {
       method: "POST",
       headers: {

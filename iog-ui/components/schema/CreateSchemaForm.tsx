@@ -82,6 +82,7 @@ const CreateSchemaForm: React.FC<CreateSchemaFormProps> = ({
       columns: columnsDict,
     };
 
+    console.log(JSON.stringify(schema, null, 2));
     handleSubmit(schema);
   };
 
