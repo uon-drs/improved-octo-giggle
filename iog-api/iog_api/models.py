@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String
 
-from .db import Base
+from iog_api.db import Base
+
 
 
 class Schemas(Base):

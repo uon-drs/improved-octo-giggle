@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from . import routes
+from iog_api import routes
 
 app = FastAPI(
         title="improved-octo-giggles",
