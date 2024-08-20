@@ -21,20 +21,26 @@ type Checks = {
 type Column = {
   name: string;
   type: string;
-  checks: Checks;
+  checks: Checks[];
 };
 
 interface ColumnsDict {
   [key: string]: {
     title: string;
     dtype: string;
+    checks?: {
+      [key: string]: string;
+    };
   };
 }
 
 const defaultColumn: Column = {
   name: "",
   type: "",
-  checks: { checkType: "", value: "" },
+  checks: [
+    { checkType: "sample1", value: "sample1_value" },
+    { checkType: "sample2", value: "sample2_value" },
+  ],
 };
 
 export default function CreateSchema() {
@@ -63,12 +69,34 @@ export default function CreateSchema() {
     setColumns(newColumns);
   };
 
+  const handleDataTypeChange = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+    index: number
+  ) => {
+    const newColumns = columns.map((column, i) => {
+      if (i === index) {
+        return { ...column, type: e.target.value };
+      }
+      return column;
+    });
+    setColumns(newColumns);
+  };
+
   const handleCreateSchema = () => {
+    console.log("columns", columns);
+
     const columnsDict: ColumnsDict = columns.reduce(
       (acc: ColumnsDict, column: Column, index: number) => {
         acc[`column${index + 1}`] = {
           title: column.name,
           dtype: column.type,
+          checks: column.checks.reduce(
+            (acc: { [key: string]: string }, check: Checks, index: number) => {
+              acc[check.checkType] = check.value;
+              return acc;
+            },
+            {}
+          ),
         };
         return acc;
       },
