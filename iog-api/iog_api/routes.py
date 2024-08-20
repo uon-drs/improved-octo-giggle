@@ -1,7 +1,12 @@
 from typing import List
 from fastapi import APIRouter
 
+from iog_api.db import get_db
+from iog_api.services.schemas import Schema, get_schemas
+
 router = APIRouter()
+
+db = get_db()
 
 @router.get("/dtypes")
 async def get_dtypes():
@@ -33,3 +38,8 @@ async def get_checks() -> List:
             "str_matches",
             "unique_values_eq"
             ]
+
+
+@router.get("/schema")
+async def get_schemata(schema_name: str) -> List[Schema]:
+    return get_schemas(db=db, schema_name=schema_name)
