@@ -6,7 +6,7 @@ def validate_schema(schema: pa.DataFrameSchema, data: pd.DataFrame):
         # Attempt to validate the data against the schema
         schema.validate(data, lazy=True)
         return True
-    except pa.errors.SchemaError:
+    except Exception as e:
         return False
     
     
