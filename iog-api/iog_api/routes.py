@@ -18,18 +18,18 @@ async def get_checks() -> List:
         A list of pandera's built in checks. We're only using the checks that take a single argument
     """
     return [
-            "equal to",
-            "not equal to"
-            "greater than",
-            "greater than or equal to",
-            "less than",
-            "less than or equal to",
-            "is in",
-            "is not in",
-            "string contains",
-            "string ends with",
+            "equal_to",
+            "not_equal_to"
+            "greater_than",
+            "greater_than_or_equal_to",
+            "less_than",
+            "less_than_or_equal_to",
+            "isin",
+            "notin",
+            "str_contains",
+            "str_endswith",
             # "string length" takes two args,
-            "string starts with",
-            "string matches",
-            "unique values equal"
+            "str_startswith",
+            "str_matches",
+            "unique_values_eq"
             ]
