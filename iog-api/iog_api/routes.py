@@ -3,9 +3,11 @@ from io import BytesIO
 
 import pandas as pd
 import pandera as pa
-from fastapi import APIRouter, UploadFile, File, HTTPException, status
+from fastapi import APIRouter, UploadFile, File, HTTPException, status, Depends
+from sqlalchemy.orm import Session
 
 from services import schemas, validation
+from db import get_db
 
 router = APIRouter()
 
@@ -68,7 +70,11 @@ async def get_checks() -> List:
 
 
 @router.post("/schemas/validate", status_code=status.HTTP_202_ACCEPTED)
-async def validate_schema(file: UploadFile = File(...), schema_name: str = '') -> None:
+async def validate_schema(
+    file: UploadFile = File(...),
+    schema_name: str = '',
+    db: Session = Depends(get_db)
+) -> None:
     """
     Accepts a file to be validated and the name of a Pandera DataFrameSchema to validate against.
     Returns 202 NO CONTENT if validation passes, else 400 BAD REQUEST with a detailed error message.
@@ -79,7 +85,7 @@ async def validate_schema(file: UploadFile = File(...), schema_name: str = '') -
 
     # Ensure the schema exists
     try:
-        schema = schema_service.get_schema(schema_name)
+        schema = schemas.get_schemas(db, schema_name)  # Pass the session to get_schemas
         if schema is None:
             raise HTTPException(status_code=400, detail="Schema not found.")
     except Exception as e:
@@ -102,3 +108,4 @@ async def validate_schema(file: UploadFile = File(...), schema_name: str = '') -
     except Exception as e:
         error_details = {"error": "Unexpected validation error", "details": str(e)}
         raise HTTPException(status_code=400, detail=error_details)
+
