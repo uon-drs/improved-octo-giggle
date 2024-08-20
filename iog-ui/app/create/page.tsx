@@ -47,7 +47,18 @@ export default function CreateSchema() {
     setColumns(newColumns);
   };
 
-  console.log(columns);
+  const handleCreateSchema = () => {
+    const schema = {
+      name: schemaName,
+      columns: columns.map((column) => ({
+        name: column.name,
+        type: column.type,
+        check: column.check,
+      })),
+    };
+
+    console.log(JSON.stringify(schema, null, 2));
+  };
 
   return (
     <div className="flex w-full flex-col px-4 py-2 md:col-span-4 gap-4">
@@ -81,7 +92,9 @@ export default function CreateSchema() {
           <Button className="w-40 self-end" onClick={handleAddColumn}>
             Add column
           </Button>
-          <Button className="w-40 self-end">Create Schema</Button>
+          <Button className="w-40 self-end" onClick={handleCreateSchema}>
+            Create Schema
+          </Button>
         </div>
       </div>
     </div>
