@@ -1,16 +1,9 @@
 from typing import Optional, List
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, Json
 from ..models import Schemas
+from ..schemas import Schema
 
-class Schema(BaseModel):
-    """
-    A wrapper for the schemata from the database
-    """
-    name: str
-    schema: Json
-
-def get_schemas(db: Session, schema_name: Optional[str]) -> List[Schema]:
+def get_schemas(db: Session, schema_name: Optional[str]=None) -> List[Schema]:
     """
     Retrieves schemata from the database
 
