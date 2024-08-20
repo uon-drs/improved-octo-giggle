@@ -13,21 +13,37 @@ const dummyDataTypes = [
   { value: "enum", label: "Enum" },
 ];
 
+type Checks = {
+  checkType: string;
+  value: string;
+};
+
 type Column = {
   name: string;
   type: string;
-  check: string;
+  checks: Checks;
+};
+
+interface ColumnsDict {
+  [key: string]: {
+    title: string;
+    dtype: string;
+  };
+}
+
+const defaultColumn: Column = {
+  name: "",
+  type: "",
+  checks: { checkType: "", value: "" },
 };
 
 export default function CreateSchema() {
-  const [columns, setColumns] = useState<Column[]>([
-    { name: "", type: "", check: "" },
-  ]);
+  const [columns, setColumns] = useState<Column[]>([defaultColumn]);
 
   const [schemaName, setSchemaName] = useState<string>("");
 
   const handleAddColumn = () => {
-    setColumns([...columns, { name: "", type: "", check: "" }]);
+    setColumns([...columns, defaultColumn]);
   };
 
   const handleSchemaNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,13 +64,20 @@ export default function CreateSchema() {
   };
 
   const handleCreateSchema = () => {
+    const columnsDict: ColumnsDict = columns.reduce(
+      (acc: ColumnsDict, column: Column, index: number) => {
+        acc[`column${index + 1}`] = {
+          title: column.name,
+          dtype: column.type,
+        };
+        return acc;
+      },
+      {}
+    );
+
     const schema = {
-      name: schemaName,
-      columns: columns.map((column) => ({
-        name: column.name,
-        type: column.type,
-        check: column.check,
-      })),
+      schema_type: schemaName,
+      columns: columnsDict,
     };
 
     console.log(JSON.stringify(schema, null, 2));
