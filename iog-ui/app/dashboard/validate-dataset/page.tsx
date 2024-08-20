@@ -6,8 +6,8 @@ import { useToast } from '@/components/ui/use-toast';
 import { Loader2, UploadCloud } from "lucide-react";
 
 // Define the endpoint URLs
-const SCHEMAS_ENDPOINT = '/api/schemas'; // Replace with your actual endpoint for schemas
-const VALIDATE_ENDPOINT = '/api/validate'; // Replace with your actual endpoint for file validation
+const SCHEMAS_ENDPOINT = '/api/schemas';
+const VALIDATE_ENDPOINT = '/api/validate';
 
 // Fetch schema options from the endpoint
 const fetchSchemas = async () => {
