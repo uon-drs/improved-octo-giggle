@@ -1,9 +1,14 @@
 from typing import List
-from fastapi import APIRouter, Depends
+from io import BytesIO
+
+import pandas as pd
+import pandera as pa
+from fastapi import APIRouter, UploadFile, File, HTTPException, status, Depends, Query
 from sqlalchemy.orm import Session
 
 from iog_api.db import get_db
-from iog_api.services.schemas import Schema, get_schemas
+from iog_api.services import schemas, validation
+from iog_api.schemas import Schema as pydanticSchema
 
 router = APIRouter()
 
@@ -65,5 +70,52 @@ async def get_checks() -> List:
             ]
 
 @router.get("/schemas")
-async def get_schemata(schema_name: str, db: Session = Depends(get_db)) -> List[Schema]:
-    return get_schemas(db=db, schema_name=schema_name)
+async def get_schemata(schema_name: str, db: Session = Depends(get_db)) -> List[pydanticSchema]:
+    return schemas.get_schemas(db=db, schema_name=schema_name)
+
+@router.post("/schemas/validate", status_code=status.HTTP_202_ACCEPTED)
+async def validate_schema(
+    file: UploadFile = File(...),
+    schema_name: str = Query(..., min_length=1),
+    db: Session = Depends(get_db)
+) -> None:
+    """
+    Accepts a file to be validated and the name of a Pandera DataFrameSchema to validate against.
+
+    Returns
+    -------
+    None
+        Returns a 202 ACCEPTED status code if the file is successfully validated against the schema.
+    """
+    try:
+        available_schemas = schemas.get_schemas(db, schema_name)
+        if available_schemas is None:
+            raise HTTPException(status_code=400, detail="Schema not found.")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error retrieving schema: {e}")
+
+    try:
+        # Read the uploaded file into a DataFrame
+        contents = await file.read()
+        df = pd.read_csv(BytesIO(contents))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error reading file: {e}")
+
+    # Create the pandera object from the json schema
+    try:
+        schema_json = available_schemas[0].schema
+        schema = pa.DataFrameSchema(schema_json)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error creating schema: {e}")
+
+    # Validate the DataFrame against the schema
+    try:
+        validation.validate_schema(schema, df)
+        return None  # Return 202 NO CONTENT on successful validation
+    except pa.errors.SchemaError as e:
+        error_details = {"error": "Schema validation failed", "details": str(e)}
+        raise HTTPException(status_code=400, detail=error_details)
+    except Exception as e:
+        error_details = {"error": "Unexpected validation error", "details": str(e)}
+        raise HTTPException(status_code=400, detail=error_details)
+
