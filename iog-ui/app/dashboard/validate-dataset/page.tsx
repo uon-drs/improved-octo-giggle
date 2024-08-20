@@ -1,18 +1,50 @@
-'use client'; // Make sure this is a client-side component
+'use client'; // Ensure this is a client-side component
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { useToast } from '@/components/ui/use-toast';
-import { Loader2, UploadCloud } from "lucide-react"; // Import the icons
+import { Loader2, UploadCloud } from "lucide-react";
+
+// Mock function to simulate fetching schema options from an endpoint
+const fetchSchemas = async () => {
+  // Simulate a network delay
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  // Return mock schema options
+  return [
+    { value: "Schema1", label: "Dataset 1" },
+    { value: "Schema2", label: "Dataset 2" },
+    { value: "Schema3", label: "Dataset 3" },
+  ];
+};
 
 export default function ValidateDataset() {
-  const { toast } = useToast();
-  const [selectedType, setSelectedType] = useState<string>('');
+  const { toast } = useToast(); // Using useToast for notifications
+  const [selectedSchema, setSelectedSchema] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
+  const [schemas, setSchemas] = useState<{ value: string; label: string }[]>([]);
 
-  const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedType(event.target.value);
+  useEffect(() => {
+    const getSchemas = async () => {
+      try {
+        const fetchedSchemas = await fetchSchemas();
+        setSchemas(fetchedSchemas);
+      } catch (error) {
+        console.error("Failed to fetch schemas", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch schema options.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    getSchemas();
+  }, [toast]);
+
+  const handleSchemaChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSchema(event.target.value);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,36 +52,36 @@ export default function ValidateDataset() {
     setFile(file);
   };
 
-  const handleUpload = async () => {
-    if (!file || !selectedType) {
+  const handleValidate = async () => {
+    if (!file || !selectedSchema) {
       toast({
         title: "Error",
-        description: "Please select a type and upload a file.",
+        description: "Please select a schema and upload a file.",
         variant: "destructive",
       });
       return;
     }
 
-    setIsUploading(true);
+    setIsValidating(true);
 
     try {
-      // Simulate file upload
+      // Simulate file validation
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       toast({
-        title: "Upload Successful!",
-        description: `File '${file.name}' was uploaded successfully.`,
+        title: "Validation Successful!",
+        description: `File '${file.name}' was validated successfully.`,
         variant: "success",
       });
     } catch (error) {
       console.error(error);
       toast({
-        title: "Upload Failed!",
+        title: "Validation Failed!",
         description: "An unknown error occurred.",
         variant: "destructive",
       });
     } finally {
-      setIsUploading(false);
+      setIsValidating(false);
     }
   };
 
@@ -58,19 +90,21 @@ export default function ValidateDataset() {
       <div className="max-w-3xl mx-auto p-8 bg-gray-900 shadow-xl rounded-lg">
         <h1 className="text-3xl font-bold mb-6 text-center">Validate Dataset</h1>
 
-        {/* Type Dropdown */}
+        {/* Schema Dropdown */}
         <div className="mb-6">
-          <label htmlFor="type" className="block text-lg font-medium mb-3">Select Type</label>
+          <label htmlFor="schema" className="block text-lg font-medium mb-3">Select Schema</label>
           <select
-            id="type"
-            value={selectedType}
-            onChange={handleTypeChange}
+            id="schema"
+            value={selectedSchema}
+            onChange={handleSchemaChange}
             className="block w-full px-4 py-3 border border-gray-700 bg-gray-800 text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">Select a type...</option>
-            <option value="type1">Type 1</option>
-            <option value="type2">Type 2</option>
-            <option value="type3">Type 3</option>
+            <option value="">Select a Schema...</option>
+            {schemas.map((schema) => (
+              <option key={schema.value} value={schema.value}>
+                {schema.label}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -86,22 +120,22 @@ export default function ValidateDataset() {
           />
         </div>
 
-        {/* Upload Button */}
+        {/* Validate Button */}
         <div className="text-center">
           <Button
-            disabled={!file || !selectedType}
-            onClick={handleUpload}
+            disabled={!file || !selectedSchema}
+            onClick={handleValidate}
             className="flex items-center justify-center"
           >
-            {isUploading ? (
+            {isValidating ? (
               <>
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" aria-hidden="true" />
-                Uploading...
+                Validating...
               </>
             ) : (
               <>
                 <UploadCloud className="w-5 h-5 mr-2" aria-hidden="true" />
-                Upload
+                Validate
               </>
             )}
           </Button>
