@@ -8,7 +8,7 @@ class TestValidateSchema(unittest.TestCase):
     def setUp(self):
         # Define a simple schema
         self.schema = pa.DataFrameSchema({
-            "column1": pa.Column(pa.Int),
+            "column1": pa.Column(pa.Int64),
             "column2": pa.Column(pa.String)
         })
 
