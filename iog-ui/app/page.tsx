@@ -6,7 +6,7 @@ export default function Home() {
         <div className="p-6">
           <h2 className="text-xl font-bold mb-6">Menu</h2>
           <ul className="mt-14 space-y-4">
-            <li><a href="#" className="block py-3 px-4 text-lg hover:bg-gray-700 rounded">Home</a></li>
+            <li><a href="/" className="block py-3 px-4 text-lg hover:bg-gray-700 rounded">Home</a></li>
             <li><a href="#" className="block py-3 px-4 text-lg hover:bg-gray-700 rounded">Create Dataset</a></li>
             <li><a href="#" className="block py-3 px-4 text-lg hover:bg-gray-700 rounded">Validate Dataset</a></li>
             <li><a href="#" className="block py-3 px-4 text-lg hover:bg-gray-700 rounded">Save Schema</a></li>
