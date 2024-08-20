@@ -159,13 +159,10 @@ async def validate_schema(
         raise HTTPException(status_code=400, detail=f"Error creating schema: {e}")
 
     # Validate the DataFrame against the schema
-    try:
-        validation.validate_schema(schema, df)
+    validation_result = validation.validate_schema(schema, df)
+
+    if validation_result:
         return None  # Return 202 NO CONTENT on successful validation
-    except pa.errors.SchemaError as e:
-        error_details = {"error": "Schema validation failed", "details": str(e)}
-        raise HTTPException(status_code=400, detail=error_details)
-    except Exception as e:
-        error_details = {"error": "Unexpected validation error", "details": str(e)}
-        raise HTTPException(status_code=400, detail=error_details)
+    else:
+        raise HTTPException(status_code=400, detail="Validation failed.")
 
