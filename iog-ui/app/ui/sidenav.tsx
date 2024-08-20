@@ -15,7 +15,7 @@ export default function Sidebar() {
           </li>
           <li>
             <a
-              href="dashboard/create-dataset" 
+              href="/dashboard/create-dataset" 
               className="block py-3 px-4 text-lg hover:bg-gray-700 rounded"
             >
               Create Dataset
@@ -23,7 +23,7 @@ export default function Sidebar() {
           </li>
           <li>
             <a
-              href="dashboard/validate-dataset" 
+              href="/dashboard/validate-dataset" 
               className="block py-3 px-4 text-lg hover:bg-gray-700 rounded"
             >
               Validate Dataset
