@@ -19,7 +19,7 @@ def get_schemas(db: Session, schema_name: Optional[str]=None) -> List[Schema]:
     List[Schema]
         A list of Schema objects
     """
-    if schema_name is not None:
+    if schema_name is None:
         # get all the schemata from the database
         return [Schema(name=res.name, schema=res.schema) for res in db.query(Schemas).all()]
     else:
