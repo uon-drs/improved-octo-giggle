@@ -30,7 +30,7 @@ data_types = [
     "string"
 ]
 
-@router.get("/datatypes/", response_model=List[str])
+@router.get("/datatypes", response_model=List[str])
 async def get_data_types():
     return data_types
 
