@@ -1,14 +1,9 @@
+import { getChecks, getDataTypes } from "./actions";
 import CreateSchemaForm from "./components/CreateSchemaForm";
 
-const dummyDataTypes = [
-  { value: "text", label: "Text" },
-  { value: "number", label: "Number" },
-  { value: "date", label: "Date" },
-  { value: "boolean", label: "Boolean" },
-  { value: "enum", label: "Enum" },
-];
-
-export default function CreateSchema() {
+export default async function CreateSchema() {
+  const dataTypes = await getDataTypes();
+  const checks = await getChecks();
 
   return (
     <div className="flex w-full flex-col px-4 py-2 md:col-span-4 gap-4">
@@ -16,7 +11,7 @@ export default function CreateSchema() {
         Create Schema
       </h1>
 
-      <CreateSchemaForm dataTypes={dummyDataTypes} checks={dummyDataTypes} />
+      <CreateSchemaForm dataTypes={dataTypes} checks={checks} />
     </div>
   );
 }

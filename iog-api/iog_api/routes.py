@@ -39,7 +39,8 @@ data_types = [
 
 numeric_checks = [
     "equal_to",
-    "not_equal_to" "greater_than",
+    "not_equal_to",
+    "greater_than",
     "greater_than_or_equal_to",
     "less_than",
     "less_than_or_equal_to",
@@ -101,21 +102,7 @@ async def get_checks(dtype: Optional[str] = None) -> List:
     if dtype is not None:
         return checks[dtype]
     else:
-        return [
-            "equal_to",
-            "not_equal_to" "greater_than",
-            "greater_than_or_equal_to",
-            "less_than",
-            "less_than_or_equal_to",
-            "isin",
-            "notin",
-            "str_contains",
-            "str_endswith",
-            # "string length" takes two args,
-            "str_startswith",
-            "str_matches",
-            "unique_values_eq",
-        ]
+        return numeric_checks + string_checks
 
 
 @router.get("/schemas")
