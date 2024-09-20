@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from io import BytesIO
 
 import pandas as pd
