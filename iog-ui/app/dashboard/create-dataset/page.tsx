@@ -1,9 +1,4 @@
-"use client";
-
-import { SchemaColumn } from "@/components/schema/SchemaColumn";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import CreateSchemaForm from "./components/CreateSchemaForm";
 
 const dummyDataTypes = [
   { value: "text", label: "Text" },
@@ -13,75 +8,7 @@ const dummyDataTypes = [
   { value: "enum", label: "Enum" },
 ];
 
-type Checks = {
-  checkType: string;
-  value: string;
-};
-
-type Column = {
-  name: string;
-  type: string;
-  checks: Checks;
-};
-
-interface ColumnsDict {
-  [key: string]: {
-    title: string;
-    dtype: string;
-  };
-}
-
-const defaultColumn: Column = {
-  name: "",
-  type: "",
-  checks: { checkType: "", value: "" },
-};
-
 export default function CreateSchema() {
-  const [columns, setColumns] = useState<Column[]>([defaultColumn]);
-
-  const [schemaName, setSchemaName] = useState<string>("");
-
-  const handleAddColumn = () => {
-    setColumns([...columns, defaultColumn]);
-  };
-
-  const handleSchemaNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSchemaName(e.target.value);
-  };
-
-  const handleColumnNameChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    const newColumns = columns.map((column, i) => {
-      if (i === index) {
-        return { ...column, name: e.target.value };
-      }
-      return column;
-    });
-    setColumns(newColumns);
-  };
-
-  const handleCreateSchema = () => {
-    const columnsDict: ColumnsDict = columns.reduce(
-      (acc: ColumnsDict, column: Column, index: number) => {
-        acc[`column${index + 1}`] = {
-          title: column.name,
-          dtype: column.type,
-        };
-        return acc;
-      },
-      {}
-    );
-
-    const schema = {
-      schema_type: schemaName,
-      columns: columnsDict,
-    };
-
-    console.log(JSON.stringify(schema, null, 2));
-  };
 
   return (
     <div className="flex w-full flex-col px-4 py-2 md:col-span-4 gap-4">
@@ -89,37 +16,7 @@ export default function CreateSchema() {
         Create Schema
       </h1>
 
-      <div className="flex flex-col gap-4 max-w-xl border border-blue-400 rounded-lg p-4">
-        <div className="flex flex-col gap-2 max-w-lg">
-          <h3 className="flex items-center">Name</h3>
-          <Input
-            name="name"
-            className="text-lg"
-            required
-            onChange={handleSchemaNameChange}
-          />
-        </div>
-
-        <div className="flex flex-col gap-4">
-          {columns.map((column, index) => (
-            <SchemaColumn
-              key={index}
-              dataTypes={dummyDataTypes}
-              checks={dummyDataTypes}
-              handleColumnNameChange={(e) => handleColumnNameChange(e, index)}
-            />
-          ))}
-        </div>
-
-        <div className="flex  gap-4">
-          <Button className="w-40 self-end" onClick={handleAddColumn}>
-            Add column
-          </Button>
-          <Button className="w-40 self-end" onClick={handleCreateSchema}>
-            Create Schema
-          </Button>
-        </div>
-      </div>
+      <CreateSchemaForm dataTypes={dummyDataTypes} checks={dummyDataTypes} />
     </div>
   );
 }
