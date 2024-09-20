@@ -15,3 +15,8 @@ export interface ColumnsDict {
         dtype: string;
     };
 }
+
+export type Schema = {
+    name: string;
+    schema: string;
+}
