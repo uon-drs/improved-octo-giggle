@@ -4,7 +4,8 @@ import { SchemaColumn, SelectOptions } from "@/components/schema/SchemaColumn";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Column, ColumnsDict } from "../types";
+import { Column, ColumnsDict, Schema } from "../types";
+import { createSchema } from "../actions";
 
 const defaultColumn: Column = {
     name: "",
@@ -55,7 +56,11 @@ export default function CreateSchemaForm({dataTypes, checks}: {dataTypes: Select
         columns: columnsDict,
       };
   
-      console.log(JSON.stringify(schema, null, 2));
+      let body: Schema = {
+        name: schemaName,
+        schema: JSON.stringify(schema),
+      }
+      createSchema(body);
     };
   
     return (
