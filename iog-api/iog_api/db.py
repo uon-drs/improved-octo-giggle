@@ -6,9 +6,7 @@ import os
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
 
 # Create a SQLAlchemy engine
-engine = create_engine(
-    DATABASE_URL
-)
+engine = create_engine(DATABASE_URL)
 
 Base = declarative_base()
 
@@ -26,8 +24,3 @@ def get_db():
         raise e
     finally:
         db.close()
-
-
-if __name__ == '__main__':
-    # Create the database tables
-    Base.metadata.create_all(bind=engine)

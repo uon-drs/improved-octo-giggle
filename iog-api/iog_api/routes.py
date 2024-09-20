@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from io import BytesIO
 
 import pandas as pd
@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from iog_api.db import get_db
 from iog_api.services import schemas, validation
-from iog_api.schemas import Schema as pydanticSchema
+from iog_api.schemas import Schema as PydanticSchema
 
 router = APIRouter()
 
@@ -34,54 +34,53 @@ data_types = [
     "complex128",
     "complex256",
     "decimal",
-    "string"
+    "string",
 ]
 
 numeric_checks = [
-        "equal_to",
-        "not_equal_to"
-        "greater_than",
-        "greater_than_or_equal_to",
-        "less_than",
-        "less_than_or_equal_to",
-        "isin",
-        "notin",
+    "equal_to",
+    "not_equal_to" "greater_than",
+    "greater_than_or_equal_to",
+    "less_than",
+    "less_than_or_equal_to",
+    "isin",
+    "notin",
 ]
 
 string_checks = [
-        "isin",
-        "notin",
-        "str_contains",
-        "str_endswith",
-        # "string length" takes two args,
-        "str_startswith",
-        "str_matches",
-        "unique_values_eq"
-        ]
+    "isin",
+    "notin",
+    "str_contains",
+    "str_endswith",
+    # "string length" takes two args,
+    "str_startswith",
+    "str_matches",
+    "unique_values_eq",
+]
 
 checks = {
-        "bool": ["equal_to", "not_equal_to"],
-        "datetime64[ns]": numeric_checks,
-        "timedelta64[ns]": numeric_checks,
-        "category": ["equal_to", "not_equal_to"],
-        "float16": numeric_checks,
-        "float32": numeric_checks,
-        "float64": numeric_checks,
-        "float128": numeric_checks,
-        "int8": numeric_checks,
-        "int16": numeric_checks,
-        "int32": numeric_checks,
-        "int64": numeric_checks,
-        "uint8": numeric_checks,
-        "uint16": numeric_checks,
-        "uint32": numeric_checks,
-        "uint64": numeric_checks,
-        "complex64": numeric_checks,
-        "complex128": numeric_checks,
-        "complex256": numeric_checks,
-        "decimal": numeric_checks,
-        "string": numeric_checks,
-    }
+    "bool": ["equal_to", "not_equal_to"],
+    "datetime64[ns]": numeric_checks,
+    "timedelta64[ns]": numeric_checks,
+    "category": ["equal_to", "not_equal_to"],
+    "float16": numeric_checks,
+    "float32": numeric_checks,
+    "float64": numeric_checks,
+    "float128": numeric_checks,
+    "int8": numeric_checks,
+    "int16": numeric_checks,
+    "int32": numeric_checks,
+    "int64": numeric_checks,
+    "uint8": numeric_checks,
+    "uint16": numeric_checks,
+    "uint32": numeric_checks,
+    "uint64": numeric_checks,
+    "complex64": numeric_checks,
+    "complex128": numeric_checks,
+    "complex256": numeric_checks,
+    "decimal": numeric_checks,
+    "string": numeric_checks,
+}
 
 
 @router.get("/datatypes", response_model=List[str])
@@ -90,7 +89,7 @@ async def get_data_types():
 
 
 @router.get("/checks")
-async def get_checks(dtype: Optional[str]=None) -> List:
+async def get_checks(dtype: Optional[str] = None) -> List:
     """
     Sends a list of the supported checks
 
@@ -104,8 +103,7 @@ async def get_checks(dtype: Optional[str]=None) -> List:
     else:
         return [
             "equal_to",
-            "not_equal_to"
-            "greater_than",
+            "not_equal_to" "greater_than",
             "greater_than_or_equal_to",
             "less_than",
             "less_than_or_equal_to",
@@ -116,18 +114,22 @@ async def get_checks(dtype: Optional[str]=None) -> List:
             # "string length" takes two args,
             "str_startswith",
             "str_matches",
-            "unique_values_eq"
-            ]
+            "unique_values_eq",
+        ]
+
 
 @router.get("/schemas")
-async def get_schemata(schema_name: str, db: Session = Depends(get_db)) -> List[pydanticSchema]:
+async def get_schemata(
+    schema_name: str, db: Session = Depends(get_db)
+) -> List[PydanticSchema]:
     return schemas.get_schemas(db=db, schema_name=schema_name)
+
 
 @router.post("/schemas/validate", status_code=status.HTTP_202_ACCEPTED)
 async def validate_schema(
     file: UploadFile = File(...),
     schema_name: str = Query(..., min_length=1),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ) -> None:
     """
     Accepts a file to be validated and the name of a Pandera DataFrameSchema to validate against.
@@ -166,3 +168,13 @@ async def validate_schema(
     else:
         raise HTTPException(status_code=400, detail="Validation failed.")
 
+
+@router.post("/schemas")
+async def create_schema(
+    schema: PydanticSchema, db: Session = Depends(get_db)
+) -> PydanticSchema:
+    try:
+        schemas.save_schema(db, schema)
+        return schema
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Unable to save schema.")
