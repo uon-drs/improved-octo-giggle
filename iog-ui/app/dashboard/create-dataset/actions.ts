@@ -4,6 +4,7 @@ import { SelectOptions } from "@/components/schema/SchemaColumn";
 import { apiBaseUrl } from "@/lib/constants";
 import { ApiError } from "@/lib/errors";
 import { capitalise } from "@/lib/utils";
+import { Schema } from "./types";
 
 export async function getChecks(): Promise<SelectOptions> {
     const response = await fetch(`${apiBaseUrl}/checks`, {
@@ -33,4 +34,20 @@ export async function getDataTypes() {
     const dataTypes: string[] = await response.json()
 
     return dataTypes.map((dt: string) => ({value: dt, label: capitalise(dt)}));
+}
+
+export async function createSchema(schema: Schema) {
+    const response = await fetch(`${apiBaseUrl}/schemas`, {
+        method: "POST",
+        body: JSON.stringify(schema),
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (!response.ok) {
+        const errorMessage: string = await response.text();
+        throw new ApiError(errorMessage, response.status);
+    }
 }
