@@ -13,7 +13,7 @@ interface SeclectOption {
   label: string;
 }
 
-type SelectOptions = SeclectOption[];
+export type SelectOptions = SeclectOption[];
 
 type CustomSelectProps = {
   label: string;
