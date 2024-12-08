@@ -6,8 +6,8 @@ import { useToast } from '@/components/ui/use-toast';
 import { Loader2, UploadCloud } from "lucide-react";
 
 // Define the endpoint URLs
-const SCHEMAS_ENDPOINT = '/api/schemas'; 
-const VALIDATE_ENDPOINT = '/api/validate'; 
+const SCHEMAS_ENDPOINT = '/api/schemas';
+const VALIDATE_ENDPOINT = '/api/validate';
 
 // Fetch schema options from the endpoint
 const fetchSchemas = async () => {
@@ -102,8 +102,8 @@ export default function ValidateDataset() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col p-12 bg-black text-white">
-      <div className="max-w-3xl mx-auto p-8 bg-gray-900 shadow-xl rounded-lg">
+    <main className="flex min-h-screen flex-col justify-center items-center bg-black text-white">
+      <div className="w-full max-w-4xl p-12 bg-gray-900 shadow-xl rounded-lg">
         <h1 className="text-3xl font-bold mb-6 text-center">Validate Dataset</h1>
 
         {/* Schema Dropdown */}
@@ -141,7 +141,7 @@ export default function ValidateDataset() {
           <Button
             disabled={!file || !selectedSchema}
             onClick={handleValidate}
-            className="flex items-center justify-center"
+            className="w-full flex items-center justify-center py-4"
           >
             {isValidating ? (
               <>
